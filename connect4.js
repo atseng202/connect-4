@@ -9,6 +9,8 @@
 
 const WIDTH = 7;
 const HEIGHT = 6;
+const PLAYER_ONE_COLOR = 'red';
+const PLAYER_TWO_COLOR = "black"
 
 let currPlayer = 1; // active player: 1 or 2
 let board = []; // array of rows, each row is array of cells  (board[y][x])
@@ -87,11 +89,7 @@ function placeInTable(row, col) {
   let piece = document.createElement("div");
   piece.classList.add("piece");
   
-  if(currPlayer===1){
-    piece.classList.add("player1");
-  } else {
-    piece.classList.add("player2");
-  }
+  piece.classList.add( currPlayer === 1 ? "player1" : "player2");
 
   let cell = document.getElementById(`${row}-${col}`);
   cell.append(piece); 
@@ -119,7 +117,7 @@ function handleClick(evt) {
 
   // place piece in board and add to HTML table
   placeInTable(row, col);
-  board[row][col] = currPlayer === 1 ? "red" : "black";
+  board[row][col] = currPlayer === 1 ? PLAYER_ONE_COLOR : PLAYER_TWO_COLOR;
 
   // check for win
   if (checkForWin()) {
@@ -128,12 +126,13 @@ function handleClick(evt) {
 
   // check for tie. Could be more efficient to put in place counter
   //boolean test for a tie
+  // TODO: Refactor isTie
   let isTie = true; 
   for(let y=0; y<HEIGHT; y++){
     if(board[y].some( x => x === null)){
       isTie = false; 
       break;
-    }; 
+    }
   }
   if(isTie) {
     return endGame("It's a tie!");
@@ -164,6 +163,7 @@ function checkForWin() {
       if (!(row >= 0 && row < HEIGHT && col >= 0 && col < WIDTH)) {
         return false;
       }
+      // TODO: Check for color match here instead of making an array of colors
 
       // add color to array to check for matches
       colorMatches.push(board[row][col]);
@@ -171,8 +171,8 @@ function checkForWin() {
 
     // check if not the same color
     let matchColor;
-    matchColor = (currPlayer === 1) ? "red" : "black";
-    return colorMatches.every( (color, idx) => color === matchColor);
+    matchColor = (currPlayer === 1) ? PLAYER_ONE_COLOR : PLAYER_TWO_COLOR;
+    return colorMatches.every( (color) => color === matchColor);
   }
 
   // using HEIGHT and WIDTH, generate "check list" of coordinates
@@ -203,7 +203,7 @@ function resetBoard() {
   currPlayer = 1;
 
   // TODO: destroy htmlBoard 
-
+  document.getElementById("board").remove();
 }
 
 makeBoard();
