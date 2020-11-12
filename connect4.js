@@ -80,8 +80,18 @@ function findSpotForCol(x) {
 
 /** placeInTable: update DOM to place piece into HTML table of board */
 
-function placeInTable(y, x) {
-  // TODO: make a div and insert into correct table cell
+function placeInTable(row, col) {
+  let piece = document.createElement("div");
+  piece.classList.add("piece");
+  
+  if(currPlayer===1){
+    piece.classList.add("player1");
+  } else {
+    piece.classList.add("player2");
+  }
+
+  let cell = document.getElementById(`${row}-${col}`);
+  cell.append(piece); 
 }
 
 /** endGame: announce game end */
@@ -93,7 +103,7 @@ function endGame(msg) {
 /** handleClick: handle click of column top to play piece */
 
 function handleClick(evt) {
-  // get x from ID of clicked cell
+  // get col from ID of clicked cell
   let col = +evt.target.id;
 
   // get the row available in column (if none, ignore click)
@@ -103,19 +113,32 @@ function handleClick(evt) {
   }
 
   // place piece in board and add to HTML table
-  // TODO: add line to update in-memory board
   placeInTable(row, col);
+  board[row][col] = currPlayer===1? "red" : "black";
 
   // check for win
   if (checkForWin()) {
     return endGame(`Player ${currPlayer} won!`);
   }
 
-  // check for tie
-  // TODO: check if all cells in board are filled; if so call, call endGame
-
+  // check for tie. Could be more efficient to put in place counter
+  let isTie = true; //boolean test for a tie
+  for(let y=0; y<HEIGHT; y++){
+    if(board[y].some( x => x === null)){
+      isTie = false; 
+      break;
+    }; 
+  }
+  if(isTie) {
+    return endGame("It's a tie!");
+  }
+  
   // switch players
-  // TODO: switch currPlayer 1 <-> 2
+  if(currPlayer===1){
+    currPlayer = 2;
+  } else {
+    currPlayer = 1; 
+  }
 }
 
 /** checkForWin: check board cell-by-cell for "does a win start here?" */
