@@ -73,9 +73,12 @@ function makeHtmlBoard() {
 
 /** findSpotForCol: given column x, return top empty y (null if filled) */
 
-function findSpotForCol(x) {
-  // TODO: write the real version of this, rather than always returning 0
-  return 0;
+function findSpotForCol(col) {
+  // find the correct row index
+  for (let possibleRow = HEIGHT - 1; possibleRow >= 0; possibleRow--) {
+    if (board[possibleRow][col] === null) return possibleRow;
+  }
+  return null;
 }
 
 /** placeInTable: update DOM to place piece into HTML table of board */
@@ -97,7 +100,9 @@ function placeInTable(row, col) {
 /** endGame: announce game end */
 
 function endGame(msg) {
-  // TODO: pop up alert message
+  alert(msg);
+  let top = document.getElementById("column-top");
+  top.removeEventListener("click", handleClick);
 }
 
 /** handleClick: handle click of column top to play piece */
@@ -114,7 +119,7 @@ function handleClick(evt) {
 
   // place piece in board and add to HTML table
   placeInTable(row, col);
-  board[row][col] = currPlayer===1? "red" : "black";
+  board[row][col] = currPlayer === 1 ? "red" : "black";
 
   // check for win
   if (checkForWin()) {
@@ -122,7 +127,8 @@ function handleClick(evt) {
   }
 
   // check for tie. Could be more efficient to put in place counter
-  let isTie = true; //boolean test for a tie
+  //boolean test for a tie
+  let isTie = true; 
   for(let y=0; y<HEIGHT; y++){
     if(board[y].some( x => x === null)){
       isTie = false; 
@@ -134,11 +140,7 @@ function handleClick(evt) {
   }
   
   // switch players
-  if(currPlayer===1){
-    currPlayer = 2;
-  } else {
-    currPlayer = 1; 
-  }
+  currPlayer = (currPlayer === 1) ? 2 : 1;
 }
 
 /** checkForWin: check board cell-by-cell for "does a win start here?" */
@@ -151,10 +153,26 @@ function checkForWin() {
    * currPlayer
    */
   function _win(cells) {
+    // plan: loop through each coord from input and check if they are within the boundaries of the board
+    // next check if all 4 colors are the same
+    // return false if any failed conditions, true otherwise
+    
+    let colorMatches = [];
+    for (let i = 0; i < cells.length; i++) {
+      let [row, col] = cells[i];
+      // check if not legal
+      if (!(row >= 0 && row < HEIGHT && col >= 0 && col < WIDTH)) {
+        return false;
+      }
 
-    //TODO: Check four cells to see if they're all legal & all color of current
-    //player
+      // add color to array to check for matches
+      colorMatches.push(board[row][col]);
+    }
 
+    // check if not the same color
+    let matchColor;
+    matchColor = (currPlayer === 1) ? "red" : "black";
+    return colorMatches.every( (color, idx) => color === matchColor);
   }
 
   // using HEIGHT and WIDTH, generate "check list" of coordinates
@@ -162,10 +180,6 @@ function checkForWin() {
   // ways to win: horizontal, vertical, diagonalDR, diagonalDL
   for (let row = 0; row < HEIGHT; row++) {
     for (let col = 0; col < WIDTH; col++) {
-      // TODO: assign values to the below variables for each of the ways to win
-      // horizontal has been assigned for you
-      // each should be an array of 4 cell coordinates:
-      // [ [y, x], [y, x], [y, x], [y, x] ]
 
       let horiz = [[row, col], [row, col + 1], [row, col + 2], [row, col + 3]];
       let vert = [[row, col], [row + 1, col], [row + 2, col], [row + 3, col]];
@@ -178,6 +192,18 @@ function checkForWin() {
       }
     }
   }
+}
+
+/*
+ * Resets the game board after a winner has been determined 
+ */
+function resetBoard() {
+  board = [];
+  makeBoard();
+  currPlayer = 1;
+
+  // TODO: destroy htmlBoard 
+
 }
 
 makeBoard();
