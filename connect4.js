@@ -7,10 +7,10 @@
  * board fills (tie)
  */
 
-const WIDTH = 3;
-const HEIGHT = 3;
+const WIDTH = 4;
+const HEIGHT = 4;
 const PLAYER_ONE_COLOR = 'red';
-const PLAYER_TWO_COLOR = "black"
+const PLAYER_TWO_COLOR = "black";
 
 let currPlayer = 1; // active player: 1 or 2
 let board = []; // array of rows, each row is array of cells  (board[y][x])
@@ -142,6 +142,30 @@ function handleClick(evt) {
   currPlayer = (currPlayer === 1) ? 2 : 1;
 }
 
+function _win(cells) {
+  // plan: loop through each coord from input and check if they are within the boundaries of the board
+  // next check if all 4 colors are the same
+  // return false if any failed conditions, true otherwise
+
+  let colorMatches = [];
+  for (let i = 0; i < cells.length; i++) {
+    let [row, col] = cells[i];
+    // check if not legal
+    if (!(row >= 0 && row < HEIGHT && col >= 0 && col < WIDTH)) {
+      return false;
+    }
+    // TODO: Check for color match here instead of making an array of colors
+
+    // add color to array to check for matches
+    colorMatches.push(board[row][col]);
+  }
+
+  // check if not the same color
+  let matchColor;
+  matchColor = (currPlayer === 1) ? PLAYER_ONE_COLOR : PLAYER_TWO_COLOR;
+  return colorMatches.every((color) => color === matchColor);
+}
+
 /** checkForWin: check board cell-by-cell for "does a win start here?" */
 
 function checkForWin() {
@@ -151,29 +175,7 @@ function checkForWin() {
    * returns true if all are legal coordinates for a cell & all cells match
    * currPlayer
    */
-  function _win(cells) {
-    // plan: loop through each coord from input and check if they are within the boundaries of the board
-    // next check if all 4 colors are the same
-    // return false if any failed conditions, true otherwise
-    
-    let colorMatches = [];
-    for (let i = 0; i < cells.length; i++) {
-      let [row, col] = cells[i];
-      // check if not legal
-      if (!(row >= 0 && row < HEIGHT && col >= 0 && col < WIDTH)) {
-        return false;
-      }
-      // TODO: Check for color match here instead of making an array of colors
-
-      // add color to array to check for matches
-      colorMatches.push(board[row][col]);
-    }
-
-    // check if not the same color
-    let matchColor;
-    matchColor = (currPlayer === 1) ? PLAYER_ONE_COLOR : PLAYER_TWO_COLOR;
-    return colorMatches.every( (color) => color === matchColor);
-  }
+ 
 
   // using HEIGHT and WIDTH, generate "check list" of coordinates
   // for 4 cells (starting here) for each of the different
