@@ -124,59 +124,54 @@ function handleClick(evt) {
     return endGame(`Player ${currPlayer} won!`);
   }
 
-  // check for tie. Could be more efficient to put in place counter
-  //boolean test for a tie
-  // TODO: Refactor isTie
-  let isTie = true; 
-  for(let y=0; y<HEIGHT; y++){
-    if(board[y].some( x => x === null)){
-      isTie = false; 
-      break;
-    }
+  // check for tie
+  if(isTie()) {
+  return endGame("It's a tie!");
   }
-  if(isTie) {
-    return endGame("It's a tie!");
-  }
-  
-  // switch players
-  currPlayer = (currPlayer === 1) ? 2 : 1;
+
+// switch players
+currPlayer = (currPlayer === 1) ? 2 : 1;
 }
 
+/* Helper function tests board for a tie. 
+    Tie takes place when board no longer has any squares equal to null. */
+function isTie(){
+  for(let y=0; y<HEIGHT; y++){
+    if(board[y].every( x => x !== null)){
+      return true;
+    }
+  }
+  return false;
+}
+
+/** _win:
+ * takes input array of 4 cell coordinates [ [row, col], [row, col], [row, col], [row, col] ]
+ * returns true if all are legal coordinates for a cell & all cells match
+ * currPlayer
+ */
 function _win(cells) {
   // plan: loop through each coord from input and check if they are within the boundaries of the board
   // next check if all 4 colors are the same
   // return false if any failed conditions, true otherwise
 
-  let colorMatches = [];
+  let matchColor = (currPlayer === 1) ? PLAYER_ONE_COLOR : PLAYER_TWO_COLOR;
   for (let i = 0; i < cells.length; i++) {
     let [row, col] = cells[i];
     // check if not legal
     if (!(row >= 0 && row < HEIGHT && col >= 0 && col < WIDTH)) {
       return false;
     }
-    // TODO: Check for color match here instead of making an array of colors
-
-    // add color to array to check for matches
-    colorMatches.push(board[row][col]);
+    // check if current colors do not match
+    if(board[row][col]!==matchColor){
+      return false;
+    }
   }
-
-  // check if not the same color
-  let matchColor;
-  matchColor = (currPlayer === 1) ? PLAYER_ONE_COLOR : PLAYER_TWO_COLOR;
-  return colorMatches.every((color) => color === matchColor);
+  return true;
 }
 
 /** checkForWin: check board cell-by-cell for "does a win start here?" */
 
 function checkForWin() {
-
-  /** _win:
-   * takes input array of 4 cell coordinates [ [row, col], [row, col], [row, col], [row, col] ]
-   * returns true if all are legal coordinates for a cell & all cells match
-   * currPlayer
-   */
- 
-
   // using HEIGHT and WIDTH, generate "check list" of coordinates
   // for 4 cells (starting here) for each of the different
   // ways to win: horizontal, vertical, diagonalDR, diagonalDL
