@@ -7,8 +7,8 @@
  * board fills (tie)
  */
 
-const WIDTH = 7;
-const HEIGHT = 6;
+const WIDTH = 3;
+const HEIGHT = 3;
 const PLAYER_ONE_COLOR = 'red';
 const PLAYER_TWO_COLOR = "black"
 
