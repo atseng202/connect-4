@@ -14,6 +14,8 @@ const PLAYER_TWO_COLOR = "black";
 
 let currPlayer = 1; // active player: 1 or 2
 let board = []; // array of rows, each row is array of cells  (board[y][x])
+let recentMove = [-1, -1];
+let inProgress = false;
 
 /** makeBoard: create in-JS board structure:
  *    board = array of rows, each row is array of cells  (board[y][x])
@@ -71,6 +73,10 @@ function makeHtmlBoard() {
     htmlBoard.append(gameRow);
 
   }
+
+  // add event listener for undo button which may be hidden initially
+  let undo = document.querySelector(".undo");
+  undo.addEventListener("click", takeBackMostRecentMove);
 }
 
 /** findSpotForCol: given column x, return top empty y (null if filled) */
@@ -78,7 +84,9 @@ function makeHtmlBoard() {
 function findSpotForCol(col) {
   // find the correct row index
   for (let possibleRow = HEIGHT - 1; possibleRow >= 0; possibleRow--) {
-    if (board[possibleRow][col] === null) return possibleRow;
+    if (board[possibleRow][col] === null) {
+      return possibleRow;
+    }
   }
   return null;
 }
@@ -86,6 +94,7 @@ function findSpotForCol(col) {
 /** placeInTable: update DOM to place piece into HTML table of board */
 
 function placeInTable(row, col) {
+  // HTML update
   let piece = document.createElement("div");
   piece.classList.add("piece");
   
@@ -93,6 +102,9 @@ function placeInTable(row, col) {
 
   let cell = document.getElementById(`${row}-${col}`);
   cell.append(piece); 
+
+  //logic update
+  [recentMove[0], recentMove[1]] = [row, col];
 }
 
 /** endGame: announce game end */
@@ -101,6 +113,11 @@ function endGame(msg) {
   alert(msg);
   let top = document.getElementById("column-top");
   top.removeEventListener("click", handleClick);
+
+  // TODO: remove or hide undo button
+  let undo = document.querySelector(".undo");
+  undo.removeEventListener("click", takeBackMostRecentMove);
+  undo.classList.remove("visible");
 }
 
 /** handleClick: handle click of column top to play piece */
@@ -115,8 +132,16 @@ function handleClick(evt) {
     return;
   }
 
+
   // place piece in board and add to HTML table
   placeInTable(row, col);
+
+  // also adding undo button
+  let htmlPieces = document.getElementsByClassName("piece");
+  if (htmlPieces.length > 0) {
+    document.querySelector(".undo").classList.add("visible");
+  }
+
   board[row][col] = currPlayer === 1 ? PLAYER_ONE_COLOR : PLAYER_TWO_COLOR;
 
   // check for win
@@ -136,11 +161,10 @@ currPlayer = (currPlayer === 1) ? 2 : 1;
 /* Helper function tests board for a tie. 
     Tie takes place when board no longer has any squares equal to null. */
 function isTie(){
-  for(let y=0; y<HEIGHT; y++){
-    if(board[y].every( x => x !== null)){
-      return true;
-    }
+  if(board[0].every( x => x !== null)){
+    return true;
   }
+
   return false;
 }
 
@@ -189,6 +213,22 @@ function checkForWin() {
       }
     }
   }
+}
+
+/* 
+ * take the current board state and reset by 1 move
+ */
+function takeBackMostRecentMove() {
+  // switch player
+  currPlayer = (currPlayer === 1) ? 2 : 1;
+
+  // use recent move to remove from board 
+  let [row, col] = recentMove;
+  board[row][col] = null;
+
+  // remove from HTML the piece
+  let cell = document.getElementById(`${row}-${col}`);
+  cell.children[0].remove();
 }
 
 /*

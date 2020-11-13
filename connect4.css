@@ -33,3 +33,11 @@
 #column-top td:hover {
   background-color: gold;
 }
+
+.undo {
+  display: none;
+}
+
+.visible {
+  display: block;
+}
