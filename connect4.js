@@ -7,15 +7,14 @@
  * board fills (tie)
  */
 
-const WIDTH = 4;
-const HEIGHT = 4;
+const WIDTH = 6;
+const HEIGHT = 7;
 const PLAYER_ONE_COLOR = 'red';
 const PLAYER_TWO_COLOR = "black";
 
 let currPlayer = 1; // active player: 1 or 2
 let board = []; // array of rows, each row is array of cells  (board[y][x])
 let recentMove = [-1, -1];
-let inProgress = false;
 
 /** makeBoard: create in-JS board structure:
  *    board = array of rows, each row is array of cells  (board[y][x])

@@ -11,14 +11,15 @@ describe("makeBoard", function(){
   });
 });
 
-//Test possibleRow returns the bottom row given first columne
+//Test possibleRow returns the bottom row given first column
+//Add more tests
 describe("findSpotForCol", function(){
   it("should return possibleRow of HEIGHT-1", function (){
     expect(findSpotForCol(0)).toEqual(HEIGHT-1);
   });
 });
 
-//Test checkForWin() 
+//Test _win() 
 // it should return true if board state is a win
 // it should return false if board state is not a win
 describe("_win", function() {
@@ -31,6 +32,7 @@ describe("_win", function() {
   });
 
   it("should return false if the colors do not match", function() {
+    fillBoardHorizontal(row, col, null);
     expect(_win(horiz)).toBe(false);
   });
 
@@ -47,3 +49,19 @@ function fillBoardHorizontal(row, col, color) {
     board[row][col + i] = color;
   }
 }
+
+//test handleClick function
+//check if row is unavailable return nothing
+//check if win returns win message for current player
+//check if tie returns tie message done above
+//TBD
+// describe("handleClick", function(){
+//   let object = {target: {id: "3"}};
+//   let board[row][col] = ;
+//   handleClick(object);
+//   //check if piece class for placeInTable to exist
+//   it("should return true ", function (){
+    
+//   }
+//   //check if switch player
+// })
